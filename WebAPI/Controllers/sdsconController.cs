@@ -30,13 +30,13 @@ namespace WebAPI.Controllers
         public IEnumerable<Avatar> Get()
         {
           
-            return _avatarService.GetAvatars(); // <-- Get this working ERROR:Service/Repos
+            return _avatarService.GetAvatars(); 
             
         }
 
 
         // [HttpGet("{id}", Name = "Get")]
-        [Authorize]
+        
         [HttpGet("{id}")]
         public ActionResult<Avatar> Get(int id)
         {
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
         // POST: api/sdscon
         //[ProduceResponseType](typeof
 
-        [Authorize(Roles = "Administrator")]
+        
         [HttpPost]
         [ProducesResponseType(typeof(Avatar), 201)]
         [ProducesResponseType(typeof(Avatar), 400)]
@@ -62,7 +62,7 @@ namespace WebAPI.Controllers
             return _avatarService.UpdateAvatar(avatar);
         }
         /// <summary>
-        /// DELETES a specific item
+        /// Deletes a specific item
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

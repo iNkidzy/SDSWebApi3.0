@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using SDS.Core.Entity;
+using WebAPI.Models;
 
-
-namespace SDS.Infrastructure.data
+namespace WebAPI.data
 {
     public class sdsDBcontext: DbContext
     {
@@ -13,7 +13,7 @@ namespace SDS.Infrastructure.data
 
         }
 
-        public DbSet<Avatar> TodoItems { get; set; }
-        public DbSet<Owner> Owners { get; set; }
+        public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

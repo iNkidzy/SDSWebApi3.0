@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
                 return Unauthorized();
 
             // check if password is correct
-            if (!model.Password.Equals(user.Password))
+            if (!authenticationHelper.VerifyPasswordHash(model.Password,user.PasswordHash,user.PasswordSalt))
                 return Unauthorized();
 
             // Authentication successful

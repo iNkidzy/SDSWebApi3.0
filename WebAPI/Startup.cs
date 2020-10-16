@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +14,9 @@ using Microsoft.OpenApi.Models;
 using SDS.Core.AplicationService;
 using SDS.Core.AplicationService.Services;
 using SDS.Core.DomainService;
-using SDS.Core.Entity;
 using SDS.Infrastructure.data;
 using SDS.Infrastructure.data.Repositories;
+using WebAPI.data;
 using WebAPI.Helpers;
 
 namespace WebAPI
@@ -39,6 +34,13 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            }
+
+            );
+          
             // Create a byte array with random values. This byte array is used
             // to generate a key for signing JWT tokens.
             Byte[] secretBytes = new byte[40];
@@ -121,9 +123,9 @@ namespace WebAPI
             );
 
 
-
-
-            
+            //services.AddAuthentication(
+            //       CertificateAuthenticationDefaults.AuthenticationScheme)
+            //   .AddCertificate();
 
         }
 
@@ -141,6 +143,10 @@ namespace WebAPI
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
+
+                //var context = scope.ServiceProvider.GetService<SQLDBContext>();
+                //context.Database.EnsureDeleted();
+                //context.Database.EnsureCreated();
                 var repo = scope.ServiceProvider.GetRequiredService<IAvatarRepository>();
                 var atrepo = scope.ServiceProvider.GetRequiredService<IAvatarTypeRepository>();
                 var owrepo = scope.ServiceProvider.GetRequiredService<IOwnerRepository>();
