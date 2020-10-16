@@ -9,7 +9,9 @@ namespace SDS.Core.Entity
         public int Id { get; set; }
         public string AvatarTypeName { get; set; }
         //public List<Avatar> AvatarTypeList { get; set; }
-        
+       
+       
+
 
     }
 }

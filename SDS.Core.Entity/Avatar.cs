@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace SDS.Core.Entity
 {
     public class Avatar
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Type { get; set; }
         public DateTime Birthdate {get; set;}
@@ -11,7 +14,8 @@ namespace SDS.Core.Entity
         public string Color {get; set;}
         public string Owner {get; set;}
         public double Price { get; set; }
-          
-        }
+        
+        
+    }
     }
 

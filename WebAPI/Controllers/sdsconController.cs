@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SDS.Core.AplicationService;
@@ -10,6 +11,7 @@ using SDS.Infrastructure.data;
 
 namespace WebAPI.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class sdsconController : ControllerBase
@@ -22,6 +24,7 @@ namespace WebAPI.Controllers
             _avatarService = avatarService;
         }
 
+
         // GET: api/sdscon
         [HttpGet]
         public IEnumerable<Avatar> Get()
@@ -31,8 +34,9 @@ namespace WebAPI.Controllers
             
         }
 
-     
-       // [HttpGet("{id}", Name = "Get")]
+
+        // [HttpGet("{id}", Name = "Get")]
+        [Authorize]
         [HttpGet("{id}")]
         public ActionResult<Avatar> Get(int id)
         {
@@ -42,8 +46,10 @@ namespace WebAPI.Controllers
         // POST: api/sdscon
         //[ProduceResponseType](typeof
 
-
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
+        [ProducesResponseType(typeof(Avatar), 201)]
+        [ProducesResponseType(typeof(Avatar), 400)]
         public ActionResult<Avatar> Post([FromBody] Avatar avatar)
         {
            return _avatarService.Create(avatar);
@@ -55,7 +61,11 @@ namespace WebAPI.Controllers
         {
             return _avatarService.UpdateAvatar(avatar);
         }
-        //nnfnf
+        /// <summary>
+        /// DELETES a specific item
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public ActionResult<Avatar> Delete(int id)
