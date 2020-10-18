@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Nadia" content="The First Webpage">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Nadia's Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <header>
+        <h1 id="Header">Nadia's World</h1>
+
+    </header>
+    <nav class="navbar sticky-top navbar-light" style="background-color: #e3f2fd;">
+
+        <div class="btn-group btn-group-lg" role="group" aria-label="Button group with nested dropdown">
+
+            <div class="btn-group" role="group">
+                <button id="btnDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Show All
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <button class="dropdown-item" onclick="loadData()" id="databutton">Avatars</button>
+                    <button class="dropdown-item" onclick="loadOwners()" id="allownersbutton">Owners</button>
+                    <button class="dropdown-item" onclick="loadAvatarTypes()" id="avatartypesbutton">Types of Avatars</button>
+
+                </div>
+                <button type="button" class="btn btn-secondary btn-nav">Update</button>
+                <button type="button" class="btn btn-secondary btn-nav">Delete</button>
+
+                <div class="btn-group" role="group">
+                    <button id="btnDrop2" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Create
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+
+                        <button class="dropdown-item" onclick="openOwner()" data-dismiss="alert" id="addowner">New Owner</button>
+
+                        <a class="dropdown-item" href="#">New Avatar</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">New Avatar Type</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </nav>
+
+    <main>
+        <h3 style="color:hotpink;font-size: 30px;">Welcome</h3>
+
+
+
+
+
+
+        <form id="form" action="#" onsubmit="createOwner(Element)">
+            <div class="form-group">
+                <legend id="title" aria-describedby="emailHelp">
+                    <small id="emailHelp" class="form-text text-muted">Please fill out all fields to create a new owner</small>
+                </legend>
+                <div>
+                    <label for="firstName">First Name:</label><br>
+                    <input type="text" class="form-control" id="firstName" name="firstName" value=""><br>
+                </div>
+                <div>
+                    <label for="lastName">Last Name:</label><br>
+                    <input type="text" class="form-control" id="lastName" name="lastName" value=""><br><br>
+                </div>
+                <div>
+                    <label for="address">Address Information:</label><br>
+                    <input type="text" class="form-control" id="address" name="address" value=""><br><br>
+                </div>
+                <div>
+                    <label for="phoneNumber">Phone Number: </label><br>
+                    <input type="number" class="form-control" id="phoneNumber" name="phoneNumber" value=""><br><br>
+                </div>
+                <div>
+                    <label for="email">Email address: </label><br>
+                    <input type="email" class="form-control" id="email" name="email" value=""><br><br>
+
+                </div>
+
+                <input class="btn btn-outline-info" id="input" type="submit" value="Submit">
+
+            </div>
+        </form>
+
+
+
+        <div id="main">
+
+
+
+            <div id="box0">Look at some magic >>>></div>
+            <div id="man1" class="red-color" style="background-color: aquamarine;margin-bottom: 12px;"> This is me</div>
+
+            <button onclick="document.getElementById('man1').innerHTML = 'Tadaa!!!'" id="Button">ClickMe!</button>
+
+
+        </div>
+    </main>
+
+    <script>function openOwner(){
+                      document.getElementById('form').style.display = 'block';
+
+        }
+            function createOwner(event) {
+            event.preventDefault()
+
+
+            let firstName = document.getElementById("firstName").value;
+            let lastName = +document.getElementById("lastName").value;
+            let address = document.getElementById("address").value;
+            let phoneNumber = +document.getElementById("phoneNumber").value;
+            let email = +document.getElementById("email").value;
+            let owners = {
+                FirstName: firstName,
+                LastName: lastName,
+                Address: address,
+                PhoneNumber: phoneNumber,
+                Email: email
+            }
+            console.log(owners)
+
+            fetch("https://localhost:44930/api/owner", {
+            method: "POST",
+            body: JSON.stringify(owners)
+        }).then(res => {
+            console.log("Request complete! response:", res);
+
+        }).catch(err => {
+
+              alert(err)
+            console.error(err);
+        });
+
+
+    }
+
+
+             function loadData(){
+                 //alert("DataLoaded!")
+                        fetch('https://localhost:44930/api/sdscon')
+                        .then(response =>response.json())
+                        .then(avatars =>{
+                            console.log(avatars) ;
+                            let datatags = "";
+                            avatars.forEach(avatar =>{
+                                datatags += "<h1>" + avatar.name + "</h1>"
+                            })
+                               document.getElementById("main").innerHTML =datatags;
+                        })
+
+             }
+
+             function loadOwners(){
+                 fetch('https://localhost:44930/api/owner')
+                     .then(response =>response.json())
+                     .then(owners =>{
+                         console.log(owners);
+                         let datatags = "";
+                         owners.forEach(owner =>{
+                             datatags += "<h2>" + owner.firstName + "</h2>"
+                         })
+                         document.getElementById("main").innerHTML =datatags;
+                     })
+
+
+
+             }
+
+             function loadAvatarTypes()
+             {
+                 fetch('https://localhost:44930/api/avatartype')
+                     .then(response =>response.json())
+                     .then(avatartypes =>{
+                         console.log(avatartypes) ;
+                         let datatags = "";
+                         avatartypes.forEach(avatartype =>{
+                             datatags += "<h1>" + avatartype.avatarTypeName + "</h1>"
+                         })
+                         document.getElementById("main").innerHTML =datatags;
+                     })
+
+
+             }</script>
+
+    <div class="footer">
+        <p>Enjoy my website</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>
+
+<style>
+    #input {
+        background-color: lightcyan;
+        color: darkblue;
+        font-size: 20px;
+        border-color: mediumpurple;
+        border-style: solid;
+        border-radius: 7px;
+        box-shadow: 2px 2px 4px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        /*background-color: aliceblue;*/
+        background-image: url('bbb.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: local;
+        background-position: right top;
+        outline-color: mediumpurple;
+        margin: 0;
+    }
+
+    #btnDrop1 {
+        background-color: lightpink;
+        color: darkslateblue;
+        border-color: mediumpurple;
+    }
+
+    #btnDrop2 {
+        background-color: lightpink;
+        color: darkslateblue;
+        border-color: mediumpurple;
+    }
+
+    .btn-nav {
+        background-color: lightpink !important;
+        color: darkslateblue;
+        border-color: mediumpurple;
+    }
+
+
+    #box0 {
+        color: mediumpurple;
+        font-size: 20px;
+    }
+
+    .red-color {
+        font-size: 20px;
+        border-style: solid;
+        border-width: 1px 3px 7px 8px;
+        border-radius: 7px;
+    }
+
+    #Button {
+        background-color: lightcyan;
+        color: darkslateblue;
+        font-size: 20px;
+        border-color: mediumpurple;
+        border-style: solid;
+        border-radius: 7px;
+        box-shadow: 2px 2px 4px;
+    }
+
+    #databutton {
+        background-color: lightcyan;
+        color: darkslateblue;
+        font-size: 20px;
+        border-color: mediumpurple;
+        border-style: solid;
+        border-radius: 7px;
+        box-shadow: 2px 2px 4px;
+    }
+
+    /*
+            #addowner{
+                   background-color: lightcyan;
+                   color:darkslateblue;
+                   font-size: 20px;
+                   border-color: mediumpurple;
+                   border-style: solid;
+                   border-radius: 7px;
+                   box-shadow: 2px 2px 4px;
+                   margin-bottom: 40px;
+               }
+
+             */
+    #Header {
+        background-color: lightsteelblue;
+        color: darkblue;
+        padding: 30px;
+        margin: 0;
+        text-align-all: left;
+        font-size: 40px;
+        font-family: -apple-system,serif;
+        text-shadow: 1px 1px 2px black, 0 0 25px white, 0 0 2px darkblue;
+        box-shadow: 2px 2px 4px;
+        border-style: solid;
+        border-color: lightpink;
+        border-width: 1px 3px 6px 20px;
+    }
+
+    #main {
+        color: mediumpurple;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    #form {
+        font-size: 24px;
+        background-color: lightsteelblue;
+        color: hotpink;
+        display: none;
+        box-shadow: 2px 2px 4px;
+        padding: 20px;
+    }
+
+
+
+
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: lightsteelblue;
+        color: mediumpurple;
+        text-align: center;
+    }
+</style>
+
+
