@@ -20,6 +20,7 @@ namespace SDS.Core.DomainService
 
         //Delete
         Owner Delete(int Id);
+        Owner ReadByIdIncludingAvatars(int id);
     }
 }
 

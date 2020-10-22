@@ -5,23 +5,27 @@ using SDS.Core.Entity;
 
 namespace SDS.Infrastructure.data
 {
-    public static class DBinitializer
+    public class DBinitializer
     {
-        public static List<Avatar> avatarLst = new List<Avatar>();
-        public static List<AvatarType> avatarTypeLst = new List<AvatarType>();
-        public static List<Owner> ownerLst = new List<Owner>();
-        
-        public static int Id = 1;
-        public static int AvatarTypeId = 1;
-        public static int OwnerId = 1;
-        
+        private IAvatarRepository _aRepo;
+        private IAvatarTypeRepository _aTypeRepo;
+        private IOwnerRepository _owRepo;
 
-        public static void InitData()
+        public DBinitializer(IAvatarRepository aRepo,IAvatarTypeRepository aTypeRepo, IOwnerRepository owRepo)
+        {
+            _aRepo = aRepo;
+            _aTypeRepo = aTypeRepo;
+            _owRepo = owRepo;
+        }
+
+        public void InitData(SDScontext ctx)
         {
 
+            ctx.Database.EnsureDeleted();
+            ctx.Database.EnsureCreated();
 
             Random r = new Random();
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Ban",
@@ -29,12 +33,12 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Red",
-                Owner = "Nana",
+                PreviousOwner = "Nana",
                 Price = 2000,
-                Id = Id++
+                
 
             });
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Kiki",
@@ -42,12 +46,12 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Green",
-                Owner = "Koko",
+                PreviousOwner = "Koko",
                 Price = 5,
-                Id = Id++
+                
             });
 
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Chili",
@@ -55,11 +59,11 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Red",
-                Owner = "Meliodas",
+                PreviousOwner = "Meliodas",
                 Price = 3,
-                Id = Id++
+                
             });
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Kirito",
@@ -67,12 +71,12 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Green",
-                Owner = "Koko",
+                PreviousOwner = "Koko",
                 Price = 4,
-                Id = Id++
+                
 
             });
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Jerry",
@@ -80,12 +84,12 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Red",
-                Owner = "Nana",
+                PreviousOwner = "Nana",
                 Price = 2,
-                Id = Id++
+               
 
             });
-            avatarLst.Add(new Avatar
+            _aRepo.Create(new Avatar
             {
 
                 Name = "Marry",
@@ -93,59 +97,59 @@ namespace SDS.Infrastructure.data
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Green",
-                Owner = "Koko",
+                PreviousOwner = "Koko",
                 Price = 1,
-                Id = Id++
+              
 
             });
 
 
 
-            avatarTypeLst.Add(new AvatarType
+            var avatarType1= ctx.AvatarTypes.Add(new AvatarType //.avatarTypeLst
             {
                 AvatarTypeName = "Cat",
-                Id = AvatarTypeId++
+                
 
-            });
+            }).Entity;
 
-            avatarTypeLst.Add(new AvatarType
+            _aTypeRepo.Create(new AvatarType
             {
                 AvatarTypeName = "Dog",
-                Id = AvatarTypeId++
+                
 
             });
-            avatarTypeLst.Add(new AvatarType
+            _aTypeRepo.Create(new AvatarType
             {
                 AvatarTypeName = "Lion",
-                Id = AvatarTypeId++
+                
 
             });
-            avatarTypeLst.Add(new AvatarType
+            _aTypeRepo.Create(new AvatarType
             {
                 AvatarTypeName = "Zebra",
-                Id = AvatarTypeId++
+                
 
             });
 
-            ownerLst.Add(new Owner
+            _owRepo.Create(new Owner
             {
                 FirstName = "Honey",
                 LastName = "Bunny",
                 Address = "Havnegade",
                 PhoneNumber = "42213184",
                 Email = "Bunny@gmail.com",
-                Id = OwnerId++
+                
 
             });
 
-            ownerLst.Add(new Owner 
+            _owRepo.Create(new Owner 
             {
                 FirstName = "Ronnie",
                 LastName = "Anderson",
                 Address = "Kirkegade",
                 PhoneNumber = "6748282",
                 Email = "RonnieA@gmail.com",
-                Id = OwnerId++
+                
 
             });
 
@@ -162,39 +166,7 @@ namespace SDS.Infrastructure.data
             //}
 
 
-
-        }
-
-        public static List<Avatar> GetAvatars()
-        {
-            return avatarLst;
-        }
-
-        public static List<AvatarType>GetAvatarTypes()
-        {
-            return avatarTypeLst;
-        }
-        public static List<Owner> GetOwners()
-        {
-            return ownerLst;
-        }
-
-        public static int GetNextId()
-        {
-           
-            return Id++;
-           
-        }
-
-        public static int GetNextIdType()
-        {
-            return AvatarTypeId++;
-
-        }
-
-        public static int GetNextIdOwner()
-        {
-            return OwnerId++;
+            ctx.SaveChanges();
 
         }
 

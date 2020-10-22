@@ -35,6 +35,7 @@ namespace WebAPI
         public ActionResult<Owner> Get(int id)
         {
             return _ownerService.FindOwnerById(id);
+            //Owner ownerToGet = _ownerService.ReadByIdIncludingAvatars(id);
         }
 
         // POST: api/owner

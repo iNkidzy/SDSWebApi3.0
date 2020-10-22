@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,6 +76,15 @@ namespace WebAPI
 
             services.AddControllers();
 
+            //NEWtonsoftJson
+            //services.AddMvc().AddNewtonsoftJson();
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            //services.AddControllers().AddNewtonsoftJson(options =>
+            //{    // Use the default property (Pascal) casing
+            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //    //   options.SerializerSettings.MaxDepth = 100;  // 100 pet limit per owner
+            //});
+
 
             // Register the AuthenticationHelper in the helpers folder for dependency
             // injection. It must be registered as a singleton service. The AuthenticationHelper
@@ -83,8 +93,11 @@ namespace WebAPI
             services.AddSingleton<IAuthenticationHelper>(new
                 AuthenticationHelper(secretBytes));
 
+
+            services.AddDbContext<SDScontext>(
+            opt => opt.UseSqlite("Data Source= SDSApp.db"));
             // In-memory database:
-            services.AddDbContext<sdsDBcontext>(opt => opt.UseInMemoryDatabase("TodoDb"));
+            //services.AddDbContext<sdsDBcontext>(opt => opt.UseInMemoryDatabase("TodoDb"));
 
             // Register the Swagger generator using Swashbuckle.
             services.AddSwaggerGen(c =>
@@ -144,6 +157,8 @@ namespace WebAPI
             using (var scope = app.ApplicationServices.CreateScope())
             {
 
+                var ctx = scope.ServiceProvider.GetService<SDScontext>();
+                
                 //var context = scope.ServiceProvider.GetService<SQLDBContext>();
                 //context.Database.EnsureDeleted();
                 //context.Database.EnsureCreated();
@@ -153,19 +168,17 @@ namespace WebAPI
                 //repo.Create(new Avatar { Name = "Bunsy", Type ="Bunny", Color ="Blue"});
                 //repo.Create(new Avatar { Name = "Chili", Type = "Magician", Color = "Pink" });
 
-                IAvatarRepository avatarRepository = new AvatarRepo();
-                IAvatarTypeRepository avatarTypeRepository = new AvatarTypeRepo();
-                IOwnerRepository ownerRepository = new OwnerRepo();
 
-                //new DBinitializer  = new DBinitializer();
-                //d.InitData();
+                new DBinitializer(repo, atrepo, owrepo).InitData(ctx);
+                //DBinitializer.InitData(ctx);
 
-                DBinitializer.InitData();
-                IAvatarService avatarService = new AvatarService(avatarRepository);
-                IAvatarTypeService avatarTypeService = new AvatarTypeService(avatarTypeRepository);
-                IOwnerService ownerService = new OwnerService(ownerRepository);
 
-                //YOU DID GITHUB WIHT TERMINAL !!!
+
+
+
+                //YOU DID GITHUB WIHT TERMINAL !!!PARTYYY
+
+
 
 
                 // Enable middleware to serve generated Swagger as a JSON endpoint.

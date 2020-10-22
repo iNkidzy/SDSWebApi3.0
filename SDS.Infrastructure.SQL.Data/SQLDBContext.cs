@@ -14,7 +14,7 @@ namespace SDS.Infrastructure.SQL.Data
             public DbSet<Avatar> Avatars { get; set; }
             public DbSet<AvatarType> AvatarTypes { get; set; }
             
-        }
     }
+} 
     
 

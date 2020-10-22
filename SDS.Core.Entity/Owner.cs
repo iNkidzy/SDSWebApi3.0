@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace SDS.Core.Entity
 {
     public class Owner
@@ -16,6 +18,7 @@ namespace SDS.Core.Entity
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+        public List<Avatar> AvatarsOwned { get; set; }
        
 
     }

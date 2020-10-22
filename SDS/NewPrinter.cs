@@ -112,7 +112,7 @@ namespace SDSUI
         { 
             foreach (var avatar in avatars)
             {
-                Console.WriteLine($"Id: {avatar.Id}\n Name: {avatar.Name}\n Type: {avatar.Type}\n Birth Date: {avatar.Birthdate}\n Sold Date: {avatar.SoldDate}\n Color: {avatar.Color}\n Owner: {avatar.Owner}\n Price: {avatar.Price}\n");
+                Console.WriteLine($"Id: {avatar.Id}\n Name: {avatar.Name}\n Type: {avatar.Type}\n Birth Date: {avatar.Birthdate}\n Sold Date: {avatar.SoldDate}\n Color: {avatar.Color}\n Owner: {avatar.previousOwner}\n Price: {avatar.Price}\n");
             }
 
             Console.WriteLine("\n");
@@ -176,7 +176,7 @@ namespace SDSUI
             Console.WriteLine("SoldDate: ");
             avatarToUpdate.SoldDate = DateTime.Parse(Console.ReadLine());
             Console.WriteLine("Owner: ");
-            avatarToUpdate.Owner = Console.ReadLine();
+            avatarToUpdate.previousOwner = Console.ReadLine();
             Console.WriteLine("Price: ");
             avatarToUpdate.Price = double.Parse(Console.ReadLine());
 

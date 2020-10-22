@@ -35,6 +35,12 @@ namespace SDS.Core.AplicationService.Services
             return _ownerRepo.GetOwnerById(id);
         }
 
+        public Owner ReadByIdIncludingAvatars(int id)
+        {
+            var owner = _ownerRepo.ReadByIdIncludingAvatars(id);
+            return owner;
+        }
+
         public List<Owner> GetOwners()
         {
             return _ownerRepo.ReadAllOwners().ToList();

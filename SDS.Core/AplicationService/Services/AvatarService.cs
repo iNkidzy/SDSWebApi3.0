@@ -36,7 +36,7 @@ namespace SDS.Core.AplicationService.Services
                 Birthdate = birthdate,
                 SoldDate = soldDate,
                 Color = color,
-                Owner = owner,
+                PreviousOwner = owner,
                 Price = price
 
             };
@@ -80,7 +80,7 @@ namespace SDS.Core.AplicationService.Services
                 avatarFromDB.Birthdate = avatarUpdate.Birthdate;
                 avatarFromDB.SoldDate = avatarUpdate.SoldDate;
                 avatarFromDB.Color = avatarUpdate.Color;
-                avatarFromDB.Owner = avatarUpdate.Owner;
+                avatarFromDB.PreviousOwner = avatarUpdate.PreviousOwner;
                 avatarFromDB.Price = avatarUpdate.Price;
 
 
@@ -92,7 +92,7 @@ namespace SDS.Core.AplicationService.Services
         {
             foreach(var avatar in avatarList)
             {
-                Console.WriteLine($"Id: {avatar.Id}\n Type: {avatar.Type}\n Birthdate: { avatar.Birthdate}\n Sold date: {avatar.SoldDate}\n Color: {avatar.Color}\n Previous Owner: {avatar.Owner}\n Price: {avatar.Price}\n");
+                Console.WriteLine($"Id: {avatar.Id}\n Type: {avatar.Type}\n Birthdate: { avatar.Birthdate}\n Sold date: {avatar.SoldDate}\n Color: {avatar.Color}\n Previous Owner: {avatar.PreviousOwner}\n Price: {avatar.Price}\n");
             }
         }
 

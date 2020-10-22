@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using SDS.Core.DomainService;
 using SDS.Core.Entity;
 
@@ -7,20 +9,28 @@ namespace SDS.Infrastructure.data.Repositories
 {
     public class OwnerRepo : IOwnerRepository
     {
-        
-        //private static List<Owner> _ownerLst = new List<Owner>();
-        //static int id = 1;
+
+         readonly SDScontext _ctx;
+
+        private static List<Owner> _ownerLst = new List<Owner>();
+        static int Ownerid = 1;
+
+        public OwnerRepo(SDScontext ctx)
+        {
+            _ctx = ctx;
+        }
 
         public Owner Create(Owner owner)
         {
-            //owner.OwnerId = id++;
-            //_ownerLst.Add(owner);
-            //return owner;
 
-            owner.Id = DBinitializer.GetNextId();
-            var list = DBinitializer.GetOwners();
-            list.Add(owner);
-            return owner;
+            Owner ow = _ctx.Owners.Add(owner).Entity;
+            _ctx.SaveChanges();
+            return ow;
+
+            //owner.Id = DBinitializer.GetNextId();
+            //var list = DBinitializer.GetOwners();
+            //list.Add(owner);
+            //return owner;
         }
 
         public Owner Delete(int id)
@@ -37,14 +47,26 @@ namespace SDS.Infrastructure.data.Repositories
 
         public Owner GetOwnerById(int Id)
         {
-            var ownerLst = DBinitializer.GetOwners();
-            var owner = ownerLst.Find(x => x.Id == Id);
+            //var ownerLst = DBinitializer.GetOwners();
+            //var owner = ownerLst.Find(x => x.Id == Id);
 
-            return owner;
+            //return owner;
+
+            return _ctx.Owners.FirstOrDefault(o => o.Id == Id);
+
         }
+
+
+
+        Owner IOwnerRepository.ReadByIdIncludingAvatars(int id)
+        {
+            return _ctx.Owners.Include(o => o.AvatarsOwned).FirstOrDefault(o => o.Id == id);
+        }
+
        public IEnumerable<Owner> ReadAllOwners()
         {
-            return DBinitializer.ownerLst;
+            // return DBinitializer.ownerLst;
+            return _ctx.Owners;
         }
 
         public Owner Update(Owner ownerUpdate)
@@ -69,8 +91,8 @@ namespace SDS.Infrastructure.data.Repositories
         public List<Owner> GetOwners()
         {
 
-            var ownerLst = DBinitializer.GetOwners();
-            return ownerLst;
+            
+            return _ownerLst;
         }
     }
    

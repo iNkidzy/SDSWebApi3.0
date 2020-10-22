@@ -9,15 +9,15 @@ namespace SDS.Infrastructure.data.Repositories
     {
 
         
-        //private static List<AvatarType> _avatarTypeLst = new List<AvatarType>();
-         public static int id = 1;
+         private static List<AvatarType> _avatarTypeLst = new List<AvatarType>();
+         public static int AvatarTypeid = 1;
 
 
         public AvatarType Create(AvatarType avatarType)
         {
-            avatarType.Id = DBinitializer.GetNextIdType();
-            var list = DBinitializer.GetAvatarTypes();
-            list.Add(avatarType);
+            avatarType.Id = AvatarTypeid++;
+
+            _avatarTypeLst.Add(avatarType);
             return avatarType;
         }
 
@@ -45,22 +45,22 @@ namespace SDS.Infrastructure.data.Repositories
         private List<AvatarType> GetAvatarTypes()
         {
             
-            var avatarTypeLst = DBinitializer.GetAvatarTypes();
-            return avatarTypeLst;
+            
+            return _avatarTypeLst;
         }
 
         public AvatarType GetAvatarById(int Id)
         {
-            var avatarTypeLst = DBinitializer.GetAvatarTypes();
-            var avatarType = avatarTypeLst.Find(x => x.Id == Id);
+            
+            var avatarType = _avatarTypeLst.Find(x => x.Id == Id);
 
             return avatarType;
         }
 
         public IEnumerable<AvatarType> ReadAllAvatars()
         {
-            return DBinitializer.GetAvatarTypes();
-            //return _avatarTypeLst;
+           
+            return _avatarTypeLst;
         }
 
         public AvatarType Update(AvatarType avatarUpdate)

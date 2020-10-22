@@ -8,30 +8,30 @@ namespace SDS.Infrastructure.data.Repositories
     public class AvatarRepo:IAvatarRepository
     {
 
-       //Those DO NOTHING apperantly...
-       // private static List<Avatar> _avatarLst = new List<Avatar>();
-       // public static int id = 1;
+       
+        private static List<Avatar> _avatarLst = new List<Avatar>();
+        public static int AvatarId = 1;
 
 
         public Avatar Create(Avatar avatar)
         {
-            avatar.Id = DBinitializer.GetNextId();
-            var list = DBinitializer.GetAvatars();
-            list.Add(avatar);
+            avatar.Id = AvatarId++;
+            
+            _avatarLst.Add(avatar);
             return avatar;
         }
 
         public IEnumerable<Avatar> ReadAllAvatars()
         {
             // return _avatarLst;
-            var avatarLst = DBinitializer.GetAvatars();
-            return avatarLst;
+           
+            return _avatarLst;
         }
 
         public Avatar GetAvatarById(int Id)
         {
-            var avatarLst = DBinitializer.GetAvatars();
-            var avatar = avatarLst.Find(x => x.Id == Id);
+            
+            var avatar = _avatarLst.Find(x => x.Id == Id);
             
             return avatar;
         }
@@ -47,7 +47,7 @@ namespace SDS.Infrastructure.data.Repositories
                 avatarFromDB.Birthdate = avatarUpdate.Birthdate;
                 avatarFromDB.SoldDate = avatarUpdate.SoldDate;
                 avatarFromDB.Color = avatarUpdate.Color;
-                avatarFromDB.Owner = avatarUpdate.Owner;
+                avatarFromDB.PreviousOwner = avatarUpdate.PreviousOwner;
                 avatarFromDB.Price = avatarUpdate.Price;
 
 
@@ -74,8 +74,8 @@ namespace SDS.Infrastructure.data.Repositories
         public List<Avatar> GetAvatars()
         {
 
-            var avatarLst = DBinitializer.GetAvatars();
-            return avatarLst;
+            
+            return _avatarLst;
         }
 
 
