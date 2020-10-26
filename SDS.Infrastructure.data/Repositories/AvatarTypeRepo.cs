@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using SDS.Core.DomainService;
 using SDS.Core.Entity;
 
@@ -8,17 +10,29 @@ namespace SDS.Infrastructure.data.Repositories
     public class AvatarTypeRepo : IAvatarTypeRepository
     {
 
+        readonly SDScontext _ctx;
         
          private static List<AvatarType> _avatarTypeLst = new List<AvatarType>();
-         public static int AvatarTypeid = 1;
+        // public static int AvatarTypeid = 1;
+
+
+        public AvatarTypeRepo(SDScontext ctx)
+        {
+            _ctx = ctx;
+        }
+
 
 
         public AvatarType Create(AvatarType avatarType)
         {
-            avatarType.Id = AvatarTypeid++;
+            //avatarType.Id = AvatarTypeid++;
 
-            _avatarTypeLst.Add(avatarType);
-            return avatarType;
+            //_avatarTypeLst.Add(avatarType);
+            //return avatarType;
+
+            AvatarType at = _ctx.AvatarTypes.Add(avatarType).Entity;
+            _ctx.SaveChanges();
+            return at;
         }
 
         public AvatarType Delete(int id)
@@ -44,22 +58,28 @@ namespace SDS.Infrastructure.data.Repositories
 
         private List<AvatarType> GetAvatarTypes()
         {
-            
-            
-            return _avatarTypeLst;
+
+
+             return _avatarTypeLst;
+            //return _ctx.AvatarTypes.ToList();
         }
 
         public AvatarType GetAvatarById(int Id)
         {
             
-            var avatarType = _avatarTypeLst.Find(x => x.Id == Id);
+            //var avatarType = _avatarTypeLst.Find(x => x.Id == Id);
 
-            return avatarType;
+            //return avatarType;
+
+            return _ctx.AvatarTypes
+                .AsNoTracking()
+                .FirstOrDefault(at => at.Id == Id);
         }
 
         public IEnumerable<AvatarType> ReadAllAvatars()
         {
-           
+
+            //return _ctx.AvatarTypes.ToList();
             return _avatarTypeLst;
         }
 

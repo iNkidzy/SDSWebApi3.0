@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
         [ProducesResponseType(typeof(Avatar), 400)]
         public ActionResult<Avatar> Post([FromBody] Avatar avatar)
         {
-           return _avatarService.Create(avatar);
+           return Ok(_avatarService.Create(avatar));
         }
 
         // PUT: api/sdscon/5

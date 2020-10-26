@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SDS.Core.Entity
 {
     public class Owner
     {
-
-        public int Id { get; set; }
+        
+        public int Id{ get; set; }
 
         //public string Username { get; set; }
         //public byte[] PasswordHash { get; set; }

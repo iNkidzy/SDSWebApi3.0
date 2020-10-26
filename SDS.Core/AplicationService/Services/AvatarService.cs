@@ -50,7 +50,7 @@ namespace SDS.Core.AplicationService.Services
 
         public List<Avatar> GetAvatars()
         {
-            return _avatarRepo.ReadAllAvatars().ToList();
+            return _avatarRepo.GetAvatars();
         }
 
        

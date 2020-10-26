@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SDS.Core.Entity;
 
 namespace SDS.Infrastructure.data
@@ -11,11 +12,20 @@ namespace SDS.Infrastructure.data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //modelBuilder.Entity<AvatarType>()
+            //   .HasKey(at => new { at.Id });
+               
+
+
+            //modelBuilder.Entity<Owner>()
+            //    .HasKey(owner => new { owner.Id });
+
+          
+
             modelBuilder.Entity<Avatar>()
              .HasOne(p => p.Owner)
              .WithMany(po => po.AvatarsOwned)
              .OnDelete(DeleteBehavior.SetNull);
-
 
 
         }

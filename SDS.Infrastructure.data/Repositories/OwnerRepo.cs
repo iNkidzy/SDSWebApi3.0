@@ -13,7 +13,7 @@ namespace SDS.Infrastructure.data.Repositories
          readonly SDScontext _ctx;
 
         private static List<Owner> _ownerLst = new List<Owner>();
-        static int Ownerid = 1;
+        //static int Ownerid = 1;
 
         public OwnerRepo(SDScontext ctx)
         {
@@ -52,7 +52,9 @@ namespace SDS.Infrastructure.data.Repositories
 
             //return owner;
 
-            return _ctx.Owners.FirstOrDefault(o => o.Id == Id);
+            return _ctx.Owners
+                .AsNoTracking()
+                .FirstOrDefault(o => o.Id == Id);
 
         }
 
@@ -90,9 +92,9 @@ namespace SDS.Infrastructure.data.Repositories
 
         public List<Owner> GetOwners()
         {
-
+            return _ctx.Owners.Include(o =>o.AvatarsOwned).ToList();
             
-            return _ownerLst;
+            //return _ownerLst;
         }
     }
    

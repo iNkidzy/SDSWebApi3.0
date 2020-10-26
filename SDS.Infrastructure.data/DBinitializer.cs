@@ -5,17 +5,17 @@ using SDS.Core.Entity;
 
 namespace SDS.Infrastructure.data
 {
-    public class DBinitializer
+    public class DBinitializer:IDBinitializer
     {
-        private IAvatarRepository _aRepo;
-        private IAvatarTypeRepository _aTypeRepo;
-        private IOwnerRepository _owRepo;
+        //private IAvatarRepository _aRepo;
+        //private IAvatarTypeRepository _aTypeRepo;
+        //private IOwnerRepository _owRepo;
 
-        public DBinitializer(IAvatarRepository aRepo,IAvatarTypeRepository aTypeRepo, IOwnerRepository owRepo)
+        public DBinitializer()
         {
-            _aRepo = aRepo;
-            _aTypeRepo = aTypeRepo;
-            _owRepo = owRepo;
+            //_aRepo = repo;
+            //_aTypeRepo = atrepo;
+            //_owRepo = owrepo;
         }
 
         public void InitData(SDScontext ctx)
@@ -24,8 +24,34 @@ namespace SDS.Infrastructure.data
             ctx.Database.EnsureDeleted();
             ctx.Database.EnsureCreated();
 
+
+            Owner owner1 = ctx.Owners.Add(new Owner
+            {
+                FirstName = "Honey",
+                LastName = "Bunny",
+                Address = "Havnegade",
+                PhoneNumber = "42213184",
+                Email = "Bunny@gmail.com",
+               
+
+
+
+            }).Entity;
+
+            Owner owner2 = ctx.Owners.Add(new Owner
+            {
+                FirstName = "Ronnie",
+                LastName = "Anderson",
+                Address = "Kirkegade",
+                PhoneNumber = "6748282",
+                Email = "RonnieA@gmail.com",
+                
+
+
+            }).Entity;
+
             Random r = new Random();
-            _aRepo.Create(new Avatar
+            Avatar avatar1 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Ban",
@@ -35,10 +61,11 @@ namespace SDS.Infrastructure.data
                 Color = "Red",
                 PreviousOwner = "Nana",
                 Price = 2000,
-                
+                Owner = owner1
 
-            });
-            _aRepo.Create(new Avatar
+
+            }).Entity;
+            Avatar avatar2 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Kiki",
@@ -48,10 +75,12 @@ namespace SDS.Infrastructure.data
                 Color = "Green",
                 PreviousOwner = "Koko",
                 Price = 5,
+                Owner =owner2
                 
-            });
 
-            _aRepo.Create(new Avatar
+            }).Entity;
+
+            Avatar avatar3 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Chili",
@@ -61,9 +90,10 @@ namespace SDS.Infrastructure.data
                 Color = "Red",
                 PreviousOwner = "Meliodas",
                 Price = 3,
-                
-            });
-            _aRepo.Create(new Avatar
+                Owner = owner1
+
+            }).Entity;
+            Avatar avatar4 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Kirito",
@@ -73,10 +103,11 @@ namespace SDS.Infrastructure.data
                 Color = "Green",
                 PreviousOwner = "Koko",
                 Price = 4,
-                
+                Owner = owner2
 
-            });
-            _aRepo.Create(new Avatar
+
+            }).Entity;
+            Avatar avatar5 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Jerry",
@@ -86,84 +117,54 @@ namespace SDS.Infrastructure.data
                 Color = "Red",
                 PreviousOwner = "Nana",
                 Price = 2,
-               
+                Owner = owner1
 
-            });
-            _aRepo.Create(new Avatar
+
+            }).Entity;
+            Avatar avatar6 = ctx.Avatars.Add(new Avatar
             {
 
                 Name = "Marry",
-                Type = "Sloth",
+                Type = "Greed",
                 Birthdate = DateTime.Now.AddYears(-15),
                 SoldDate = DateTime.Now.AddYears(-5),
                 Color = "Green",
                 PreviousOwner = "Koko",
                 Price = 1,
-              
+                Owner = owner2
 
-            });
-
-
-
-            var avatarType1= ctx.AvatarTypes.Add(new AvatarType //.avatarTypeLst
-            {
-                AvatarTypeName = "Cat",
-                
 
             }).Entity;
 
-            _aTypeRepo.Create(new AvatarType
+
+            AvatarType avatarTypet1 = ctx.AvatarTypes.Add(new AvatarType //.avatarTypeLst
+            {
+                AvatarTypeName = "Cat",
+
+
+            }).Entity;
+
+            AvatarType avatarType2 = ctx.AvatarTypes.Add(new AvatarType
             {
                 AvatarTypeName = "Dog",
-                
 
-            });
-            _aTypeRepo.Create(new AvatarType
+
+            }).Entity;
+
+            AvatarType avatarType3 = ctx.AvatarTypes.Add(new AvatarType
             {
                 AvatarTypeName = "Lion",
-                
 
-            });
-            _aTypeRepo.Create(new AvatarType
+
+            }).Entity;
+            AvatarType avatarType4 = ctx.AvatarTypes.Add(new AvatarType
             {
                 AvatarTypeName = "Zebra",
-                
-
-            });
-
-            _owRepo.Create(new Owner
-            {
-                FirstName = "Honey",
-                LastName = "Bunny",
-                Address = "Havnegade",
-                PhoneNumber = "42213184",
-                Email = "Bunny@gmail.com",
-                
-
-            });
-
-            _owRepo.Create(new Owner 
-            {
-                FirstName = "Ronnie",
-                LastName = "Anderson",
-                Address = "Kirkegade",
-                PhoneNumber = "6748282",
-                Email = "RonnieA@gmail.com",
-                
-
-            });
 
 
-            //foreach (Avatar avatar in avartarLists)
-            //{
-            //    int bdInt = r.Next(1, 100);
-            //    avatar.Birthday = DateTime.Now.AddYears(-1 * bdInt);
-            //    avatar.Birthday = avatar.Birthday.AddDays(r.Next(0, 365));
-            //    avatar.Birthday = avatar.Birthday.AddSeconds(r.Next(0, 60 * 60 * 24));
-            //    avatar.SoldDate = DateTime.Now.AddYears(-1 * r.Next(1, bdInt));
-            //    avatar.SoldDate = avatar.SoldDate.AddDays(r.Next(0, 365));
-            //    avatar.SoldDate = avatar.SoldDate.AddSeconds(r.Next(0, 60 * 60 * 24));
-            //}
+            }).Entity;
+
+
 
 
             ctx.SaveChanges();

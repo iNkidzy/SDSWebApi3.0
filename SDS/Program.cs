@@ -25,7 +25,7 @@ namespace SDS
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var avatarRepo = serviceProvider.GetRequiredService<IAvatarRepository>();
-            new DBinitializer(avatarRepo).InitData();
+            //new DBinitializer().InitData();
             var printer = serviceProvider.GetRequiredService<IPrinter>();
             printer.StartUI();
 

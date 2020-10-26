@@ -22,10 +22,10 @@ namespace SDS.Core.DomainService
         //Delete
         Avatar Delete(int Id);
 
+        List<Avatar> GetAvatars();
 
-        
-        
-        
+
+
     }
 }
 

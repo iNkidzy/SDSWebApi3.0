@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -9,27 +10,33 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using SDS.Core.AplicationService;
 using SDS.Core.AplicationService.Services;
 using SDS.Core.DomainService;
 using SDS.Infrastructure.data;
 using SDS.Infrastructure.data.Repositories;
 using WebAPI.data;
+using WebAPI.Data;
 using WebAPI.Helpers;
 
 namespace WebAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
+
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -41,7 +48,18 @@ namespace WebAPI
             }
 
             );
-          
+
+            if (Environment.IsDevelopment())
+            {
+                services.AddDbContext<SDScontext>(opt => { opt.UseSqlite("Data Source=SDSApp.db"); }
+                );
+            }
+            else
+            {
+                services.AddDbContext<SDScontext>(opt => { }
+                    //opt.UseSqlServer(Configuration.GetConnectionString("defaultConnection"))
+                    );
+            }
             // Create a byte array with random values. This byte array is used
             // to generate a key for signing JWT tokens.
             Byte[] secretBytes = new byte[40];
@@ -73,17 +91,21 @@ namespace WebAPI
             services.AddScoped<IAvatarTypeService, AvatarTypeService>();
             services.AddScoped<IOwnerRepository, OwnerRepo>();
             services.AddScoped<IOwnerService, OwnerService>();
+            services.AddTransient<IDBinitializer, DBinitializer>();
+            
 
             services.AddControllers();
 
             //NEWtonsoftJson
-            //services.AddMvc().AddNewtonsoftJson();
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            //services.AddControllers().AddNewtonsoftJson(options =>
-            //{    // Use the default property (Pascal) casing
-            //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            //    //   options.SerializerSettings.MaxDepth = 100;  // 100 pet limit per owner
-            //});
+            services.AddMvc().AddNewtonsoftJson();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {    // Use the default property (Pascal) casing
+                
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.MaxDepth = 2;  // 100 pet limit per owner
+                //   options.SerializerSettings.MaxDepth = 2;  // 100 pet limit per owner
+            });
 
 
             // Register the AuthenticationHelper in the helpers folder for dependency
@@ -94,8 +116,18 @@ namespace WebAPI
                 AuthenticationHelper(secretBytes));
 
 
-            services.AddDbContext<SDScontext>(
-            opt => opt.UseSqlite("Data Source= SDSApp.db"));
+            //services.AddDbContext<SDScontext>(
+                 
+            //opt =>
+            //    {
+            //        opt
+            //            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            //            .UseLoggerFactory(loggerFactory)
+            //            .UseSqlite("Data Source=SDSApp.db");
+
+            //    }, ServiceLifetime.Transient);
+           
+            
             // In-memory database:
             //services.AddDbContext<sdsDBcontext>(opt => opt.UseInMemoryDatabase("TodoDb"));
 
@@ -147,31 +179,57 @@ namespace WebAPI
         {
             if (env.IsDevelopment())
             {
-               
-                app.UseDeveloperExceptionPage();
 
+                app.UseDeveloperExceptionPage();
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    // Initialize the database
+                    var services = scope.ServiceProvider;
+                    var ctx = scope.ServiceProvider.GetService<SDScontext>();
+                    ctx.Database.EnsureDeleted();
+                    ctx.Database.EnsureCreated();
+                    var dbInitializer = services.GetService<IDBinitializer>();
+                    dbInitializer.InitData(ctx);
+                }
             }
 
-           
-
-            using (var scope = app.ApplicationServices.CreateScope())
+            else
             {
+                app.UseHsts();
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var ctx = scope.ServiceProvider.GetService<SDScontext>();
+                    ctx.Database.EnsureCreated();
+                }
+            }
+            
 
-                var ctx = scope.ServiceProvider.GetService<SDScontext>();
+
+
+            
+            //using (var scope = app.ApplicationServices.CreateScope())
+            //{
+
+            //    var ctx = scope.ServiceProvider.GetService<SDScontext>();
                 
-                //var context = scope.ServiceProvider.GetService<SQLDBContext>();
-                //context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
-                var repo = scope.ServiceProvider.GetRequiredService<IAvatarRepository>();
-                var atrepo = scope.ServiceProvider.GetRequiredService<IAvatarTypeRepository>();
-                var owrepo = scope.ServiceProvider.GetRequiredService<IOwnerRepository>();
-                //repo.Create(new Avatar { Name = "Bunsy", Type ="Bunny", Color ="Blue"});
-                //repo.Create(new Avatar { Name = "Chili", Type = "Magician", Color = "Pink" });
+                
+            //    //var context = scope.ServiceProvider.GetService<SQLDBContext>();
+            //    //context.Database.EnsureDeleted();
+            //    //context.Database.EnsureCreated();
+            //    var repo = scope.ServiceProvider.GetRequiredService<IAvatarRepository>();
+            //    var atrepo = scope.ServiceProvider.GetRequiredService<IAvatarTypeRepository>();
+            //    var owrepo = scope.ServiceProvider.GetRequiredService<IOwnerRepository>();
+            //    //repo.Create(new Avatar { Name = "Bunsy", Type ="Bunny", Color ="Blue"});
+            //    //repo.Create(new Avatar { Name = "Chili", Type = "Magician", Color = "Pink" });
 
 
-                new DBinitializer(repo, atrepo, owrepo).InitData(ctx);
+            //    new DBinitializer().InitData(ctx);
                 //DBinitializer.InitData(ctx);
+                //Console.WriteLine("avatar count = " + ctx.Avatars.Count());
+                //Console.WriteLine("owner count = " + ctx.Owners.Count());
+                //Console.WriteLine("avatar type count = " + ctx.AvatarTypes.Count());
 
+              
 
 
 
@@ -215,6 +273,6 @@ namespace WebAPI
             }
         }
     }
-}
+
 
 
