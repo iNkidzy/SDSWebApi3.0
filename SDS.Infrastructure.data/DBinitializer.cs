@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using SDS.Core.DomainService;
 using SDS.Core.Entity;
 
@@ -20,6 +22,13 @@ namespace SDS.Infrastructure.data
 
         public void InitData(SDScontext ctx)
         {
+
+            //if (ctx.Avatars.Any())
+            //{
+            //    // ctx.Database.ExecuteSqlRaw("DROP TABLE Avatars");
+            //    ctx.Database.EnsureCreated();
+            //}
+
 
             ctx.Database.EnsureDeleted();
             ctx.Database.EnsureCreated();
@@ -165,8 +174,8 @@ namespace SDS.Infrastructure.data
             }).Entity;
 
 
-
-
+            
+            //ctx.Avatars.AddRange(avatar1,avatar2,avatar3,avatar4,avatar5,avatar6);
             ctx.SaveChanges();
 
         }

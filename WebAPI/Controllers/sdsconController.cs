@@ -26,6 +26,7 @@ namespace WebAPI.Controllers
 
 
         // GET: api/sdscon
+        //[Authorize(Roles = "Administrator")]
         [HttpGet]
         public IEnumerable<Avatar> Get()
         {
@@ -36,7 +37,7 @@ namespace WebAPI.Controllers
 
 
         // [HttpGet("{id}", Name = "Get")]
-        
+        //[Authorize]
         [HttpGet("{id}")]
         public ActionResult<Avatar> Get(int id)
         {
@@ -46,7 +47,7 @@ namespace WebAPI.Controllers
         // POST: api/sdscon
         //[ProduceResponseType](typeof
 
-        
+        //[Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(Avatar), 201)]
         [ProducesResponseType(typeof(Avatar), 400)]
@@ -56,6 +57,7 @@ namespace WebAPI.Controllers
         }
 
         // PUT: api/sdscon/5
+       // [Authorize]
         [HttpPut("{id}")]
         public ActionResult<Avatar> Put(int id, [FromBody] Avatar avatar)
         {
@@ -67,6 +69,7 @@ namespace WebAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // DELETE: api/ApiWithActions/5
+        //[Authorize]
         [HttpDelete("{id}")]
         public ActionResult<Avatar> Delete(int id)
         {

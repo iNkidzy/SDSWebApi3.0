@@ -23,6 +23,7 @@ using SDS.Infrastructure.data.Repositories;
 using WebAPI.data;
 using WebAPI.Data;
 using WebAPI.Helpers;
+using Microsoft.AspNetCore.Authentication.Certificate;
 
 namespace WebAPI
 {
@@ -42,6 +43,7 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //Find more about LoggerFactory
             var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddConsole();
@@ -50,16 +52,20 @@ namespace WebAPI
             );
 
             if (Environment.IsDevelopment())
-            {
+            {   //In memory database:
                 services.AddDbContext<SDScontext>(opt => { opt.UseSqlite("Data Source=SDSApp.db"); }
                 );
             }
             else
             {
-                services.AddDbContext<SDScontext>(opt => { }
-                    //opt.UseSqlServer(Configuration.GetConnectionString("defaultConnection"))
+                //Azure SQL database:
+                services.AddDbContext<SDScontext>(opt => 
+                    opt.UseSqlServer(Configuration.GetConnectionString("defaultConnection"))
                     );
             }
+
+            //AUTHENTICATION
+            
             // Create a byte array with random values. This byte array is used
             // to generate a key for signing JWT tokens.
             Byte[] secretBytes = new byte[40];
@@ -83,6 +89,21 @@ namespace WebAPI
             });
 
 
+            // Register the AuthenticationHelper in the helpers folder for dependency
+            // injection. It must be registered as a singleton service. The AuthenticationHelper
+            // is instantiated with a parameter. The parameter is the previously created
+            // "secretBytes" array, which is used to generate a key for signing JWT tokens,
+            services.AddSingleton<IAuthenticationHelper>(new
+                AuthenticationHelper(secretBytes));
+
+
+            services.AddAuthentication(
+                   CertificateAuthenticationDefaults.AuthenticationScheme)
+               .AddCertificate();
+
+
+
+            //REPOS implementation in configureServices
 
             //var serviceCollection = new ServiceCollection();///////////new imp
             services.AddScoped<IAvatarRepository, AvatarRepo>();
@@ -103,21 +124,16 @@ namespace WebAPI
             {    // Use the default property (Pascal) casing
                 
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                options.SerializerSettings.MaxDepth = 2;  // 100 pet limit per owner
+                options.SerializerSettings.MaxDepth = 100;  
                 //   options.SerializerSettings.MaxDepth = 2;  // 100 pet limit per owner
             });
 
 
-            // Register the AuthenticationHelper in the helpers folder for dependency
-            // injection. It must be registered as a singleton service. The AuthenticationHelper
-            // is instantiated with a parameter. The parameter is the previously created
-            // "secretBytes" array, which is used to generate a key for signing JWT tokens,
-            services.AddSingleton<IAuthenticationHelper>(new
-                AuthenticationHelper(secretBytes));
+            //DATABASE
 
-
+            //Adding Context:
             //services.AddDbContext<SDScontext>(
-                 
+
             //opt =>
             //    {
             //        opt
@@ -126,10 +142,14 @@ namespace WebAPI
             //            .UseSqlite("Data Source=SDSApp.db");
 
             //    }, ServiceLifetime.Transient);
-           
-            
-            // In-memory database:
+
+
+            // Implementation of In-memory database:
             //services.AddDbContext<sdsDBcontext>(opt => opt.UseInMemoryDatabase("TodoDb"));
+
+
+
+            //SWAGGER
 
             // Register the Swagger generator using Swashbuckle.
             services.AddSwaggerGen(c =>
@@ -158,7 +178,10 @@ namespace WebAPI
             //       });
         });
 
-            // Configure the default CORS policy.
+
+            //CORS
+
+            //Configure the default CORS policy.
             services.AddCors(options =>
                 options.AddDefaultPolicy(
                     builder =>
@@ -168,79 +191,70 @@ namespace WebAPI
             );
 
 
-            //services.AddAuthentication(
-            //       CertificateAuthenticationDefaults.AuthenticationScheme)
-            //   .AddCertificate();
-
         }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        using (var scope = app.ApplicationServices.CreateScope())
         {
+                // Initialize the database
+                var services = scope.ServiceProvider;
+                var ctx = scope.ServiceProvider.GetService<SDScontext>();
+                //ctx.Database.EnsureDeleted();
+                //ctx.Database.EnsureCreated(); <--Reside in the DBinitializer
+                var dbInitializer = services.GetService<IDBinitializer>();
+                dbInitializer.InitData(ctx);
+
+
+        }
+
+
             if (env.IsDevelopment())
             {
 
                 app.UseDeveloperExceptionPage();
-                using (var scope = app.ApplicationServices.CreateScope())
-                {
-                    // Initialize the database
-                    var services = scope.ServiceProvider;
-                    var ctx = scope.ServiceProvider.GetService<SDScontext>();
-                    ctx.Database.EnsureDeleted();
-                    ctx.Database.EnsureCreated();
-                    var dbInitializer = services.GetService<IDBinitializer>();
-                    dbInitializer.InitData(ctx);
-                }
+
             }
 
+
+            //Flip//Creating the scoop was here before/using was here
             else
             {
-                app.UseHsts();
-                using (var scope = app.ApplicationServices.CreateScope())
-                {
-                    var ctx = scope.ServiceProvider.GetService<SDScontext>();
-                    ctx.Database.EnsureCreated();
-                }
+                    app.UseHsts();
+                    using (var scope = app.ApplicationServices.CreateScope())
+                    {
+                        var ctx = scope.ServiceProvider.GetService<SDScontext>();
+                        ctx.Database.EnsureCreated();
+                    }
             }
-            
 
 
-
-            
+            //Configuration of Database/Messy old code Delete later
+         
             //using (var scope = app.ApplicationServices.CreateScope())
             //{
-
             //    var ctx = scope.ServiceProvider.GetService<SDScontext>();
-                
-                
-            //    //var context = scope.ServiceProvider.GetService<SQLDBContext>();
-            //    //context.Database.EnsureDeleted();
-            //    //context.Database.EnsureCreated();
+
+            //This is for static database 
             //    var repo = scope.ServiceProvider.GetRequiredService<IAvatarRepository>();
             //    var atrepo = scope.ServiceProvider.GetRequiredService<IAvatarTypeRepository>();
             //    var owrepo = scope.ServiceProvider.GetRequiredService<IOwnerRepository>();
+            //   
             //    //repo.Create(new Avatar { Name = "Bunsy", Type ="Bunny", Color ="Blue"});
             //    //repo.Create(new Avatar { Name = "Chili", Type = "Magician", Color = "Pink" });
 
-
-            //    new DBinitializer().InitData(ctx);
-                //DBinitializer.InitData(ctx);
-                //Console.WriteLine("avatar count = " + ctx.Avatars.Count());
-                //Console.WriteLine("owner count = " + ctx.Owners.Count());
-                //Console.WriteLine("avatar type count = " + ctx.AvatarTypes.Count());
-
-              
+            //new DBinitializer().InitData();
+            //DBinitializer.InitData();
+            //Console.WriteLine("avatar count = " + ctx.Avatars.Count());
+            //Console.WriteLine("owner count = " + ctx.Owners.Count());
+            //Console.WriteLine("avatar type count = " + ctx.AvatarTypes.Count());
 
 
 
 
-                //YOU DID GITHUB WIHT TERMINAL !!!PARTYYY
-
-
-
-
-                // Enable middleware to serve generated Swagger as a JSON endpoint.
-                app.UseSwagger();
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
                 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
                 // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
@@ -252,6 +266,7 @@ namespace WebAPI
                ////////////////////Swagger Result: add--> /swagger/index.html 
 
 
+                 //Creates a Generated WelcomePage 
                 // app.UseWelcomePage();
 
                 app.UseHttpsRedirection();
@@ -261,7 +276,7 @@ namespace WebAPI
                 // Enable CORS 
                 app.UseCors();
 
-                //Authentication
+                //Enable Authentication
                 app.UseAuthentication(); 
 
                 app.UseAuthorization();
@@ -274,5 +289,6 @@ namespace WebAPI
         }
     }
 
+//YOU DID GITHUB WIHT TERMINAL !!!YAAAAAY
 
 

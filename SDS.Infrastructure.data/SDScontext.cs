@@ -14,13 +14,10 @@ namespace SDS.Infrastructure.data
         {
             //modelBuilder.Entity<AvatarType>()
             //   .HasKey(at => new { at.Id });
-               
-
 
             //modelBuilder.Entity<Owner>()
             //    .HasKey(owner => new { owner.Id });
 
-          
 
             modelBuilder.Entity<Avatar>()
              .HasOne(p => p.Owner)
